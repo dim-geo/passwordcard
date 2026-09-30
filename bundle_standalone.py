@@ -69,6 +69,7 @@ def generate_standalone(project_dir: Path, output_file: Path):
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'self';" />
     {icon_tag}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Password Card Generator</title>
