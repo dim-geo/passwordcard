@@ -22,10 +22,10 @@
     }
 
     let classNames = {
-        ",.;:!?-+*%/&'\"#()": "easy qwertz extra",
         "abcdefghijklmnopqrstuvwxyz": "lowercase latin",
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ": "uppercase latin",
         "0123456789": "digits",
+        ",.;:!?-+*%/&'\"#()": "easy qwertz extra",
         "äöüÄÖÜ": "umlauts",
         ",;.:!?\"\'": "punctuation",
         "([{}])": "parenthesis",
@@ -77,7 +77,8 @@
     $: color_choice = 1;
 
     $: inputList = Array.from(input)
-    $: fullDict = Array.from(new Set(Array.from(dict.join('') + customDict).filter(c => !exclude.includes(c))))
+    $: sortedDict = classes.filter(cls => dict.includes(cls))
+    $: fullDict = Array.from(new Set(Array.from(sortedDict.join('') + customDict).filter(c => !exclude.includes(c))))
     let rng: Function;
     let numseed: Number;
     let out: String[][];
