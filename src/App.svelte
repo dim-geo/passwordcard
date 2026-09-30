@@ -51,8 +51,8 @@
             There are two color sets to choose from but each color can be customized separately as well.
             This way you can even use the same color multiple times (for example if you're color blind).
             To do that just click on the colors in the color customisation option.
-            <p>Inspired by <a href="https://github.com/PeterBrockfeld/passwordCardGenerator">PeterBrockfeld/passwordCardGenerator</a>
-                and <a href="https://www.ines-it.de/informationssicherheit/passwortkarte/">ines-it password card</a>.
+            <p>Inspired by <a href="https://github.com/PeterBrockfeld/passwordCardGenerator" target="_blank" rel="noopener noreferrer">PeterBrockfeld/passwordCardGenerator</a>
+                and <a href="https://www.ines-it.de/informationssicherheit/passwortkarte/" target="_blank" rel="noopener noreferrer">ines-it password card</a>.
                 This implementation is more customizable and supports emoji (not looking pretty).
             </p>
         </div>
