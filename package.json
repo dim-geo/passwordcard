@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build & node buildHelper.js",
+    "build": "vite build && node buildHelper.js",
+    "standalone": "python3 bundle_standalone.py",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
