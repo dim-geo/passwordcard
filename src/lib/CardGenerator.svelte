@@ -21,6 +21,70 @@
         seed = Math.random().toString(36).slice(2, 2 + 16)
     }
 
+    let fileInput: HTMLInputElement;
+
+    let saveConfig = () => {
+        const config = {
+            version: 1,
+            seed,
+            input,
+            dict,
+            customDict,
+            exclude,
+            cardborder,
+            color_choice,
+            color_options
+        };
+        const jsonStr = JSON.stringify(config, null, 2);
+        let url: string;
+        try {
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            url = URL.createObjectURL(blob);
+        } catch {
+            url = "data:application/json;charset=utf-8," + encodeURIComponent(jsonStr);
+        }
+        const a = document.createElement("a");
+        a.href = url;
+        const safeSeed = seed.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 20);
+        a.download = `passwordcard-${safeSeed || "config"}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        if (url.startsWith("blob:")) {
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+    };
+
+    let triggerLoadFile = () => {
+        fileInput?.click();
+    };
+
+    let loadConfig = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        const file = target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string;
+                const data = JSON.parse(content);
+                if (typeof data.seed === "string") seed = data.seed;
+                if (typeof data.input === "string") input = data.input;
+                if (Array.isArray(data.dict)) dict = data.dict;
+                if (typeof data.customDict === "string") customDict = data.customDict;
+                if (typeof data.exclude === "string") exclude = data.exclude;
+                if (typeof data.cardborder === "boolean") cardborder = data.cardborder;
+                if (typeof data.color_choice === "number") color_choice = data.color_choice;
+                if (Array.isArray(data.color_options)) color_options = data.color_options;
+            } catch (err) {
+                alert("Failed to load settings: invalid JSON file.");
+            }
+        };
+        reader.readAsText(file);
+        target.value = "";
+    };
+
     let classNames = {
         "abcdefghijklmnopqrstuvwxyz": "lowercase latin",
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ": "uppercase latin",
@@ -95,9 +159,12 @@
                                                       placeholder="seed"/>
         <button on:click={generateSeed}>generate</button>
     </label>
-    <div>
+    <div class="card-controls">
         <label><input type="checkbox" bind:checked={extraOptions} name="extraOptions"/>options</label>
         <label><input type="checkbox" bind:checked={cardborder} name="cardborder"/>show credit card border <span style="font-size: 7pt">(ISO/IEC 7810 ID-1)</span></label>
+        <button on:click={saveConfig} title="Save seed, alphabet, and options to file">save</button>
+        <button on:click={triggerLoadFile} title="Load seed, alphabet, and options from file">load</button>
+        <input type="file" bind:this={fileInput} on:change={loadConfig} accept=".json,application/json" style="display: none;" />
     </div>
     {#if extraOptions}
         <div class="text-options">
@@ -242,6 +309,14 @@
     .settings {
         display: flex;
         flex-direction: column;
+    }
+
+    .card-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
     }
 
     .picker {
