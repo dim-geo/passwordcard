@@ -58,7 +58,9 @@
     }
 
     .cell {
-        font-family: monospace;
+        font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
+        font-variant-numeric: slashed-zero;
+        font-feature-settings: "zero" 1;
         width: 12px;
         height: 12px;
         /*margin: 2px;*/

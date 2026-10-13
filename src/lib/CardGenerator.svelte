@@ -293,7 +293,9 @@
         width: 100%;
         box-sizing: border-box;
         font-size: 11pt;
-        font-family: monospace;
+        font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
+        font-variant-numeric: slashed-zero;
+        font-feature-settings: "zero" 1;
     }
 
     .text-label {
@@ -359,7 +361,9 @@
     }
 
     .seedDisplay {
-        font-family: monospace;
+        font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
+        font-variant-numeric: slashed-zero;
+        font-feature-settings: "zero" 1;
         font-size: xx-small;
         background-color: grey;
         width: fit-content;
@@ -369,7 +373,9 @@
 
     #fullDict {
         width: 100%;
-        font-family: monospace;
+        font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
+        font-variant-numeric: slashed-zero;
+        font-feature-settings: "zero" 1;
         font-size: 5pt;
         font-weight: 1;
         overflow-wrap: anywhere;

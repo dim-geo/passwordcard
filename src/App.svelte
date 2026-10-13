@@ -83,7 +83,9 @@
     }
 
     pre {
-        font-family: monospace;
+        font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
+        font-variant-numeric: slashed-zero;
+        font-feature-settings: "zero" 1;
         white-space: pre;
         margin: 0 -1px;
         border: 1px solid lightgray;
