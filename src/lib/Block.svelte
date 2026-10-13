@@ -59,8 +59,12 @@
 
     .cell {
         font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
-        font-variant-numeric: slashed-zero;
-        font-feature-settings: "zero" 1;
+        font-variant-numeric: slashed-zero tabular-nums;
+        font-variant-ligatures: none;
+        font-feature-settings: "zero" 1, "tnum" 1, "calt" 0, "liga" 0;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         width: 12px;
         height: 12px;
         /*margin: 2px;*/

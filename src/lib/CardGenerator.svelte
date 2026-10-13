@@ -294,8 +294,12 @@
         box-sizing: border-box;
         font-size: 11pt;
         font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
-        font-variant-numeric: slashed-zero;
-        font-feature-settings: "zero" 1;
+        font-variant-numeric: slashed-zero tabular-nums;
+        font-variant-ligatures: none;
+        font-feature-settings: "zero" 1, "tnum" 1, "calt" 0, "liga" 0;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
     .text-label {
@@ -362,8 +366,12 @@
 
     .seedDisplay {
         font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
-        font-variant-numeric: slashed-zero;
-        font-feature-settings: "zero" 1;
+        font-variant-numeric: slashed-zero tabular-nums;
+        font-variant-ligatures: none;
+        font-feature-settings: "zero" 1, "tnum" 1, "calt" 0, "liga" 0;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         font-size: xx-small;
         background-color: grey;
         width: fit-content;
@@ -374,8 +382,12 @@
     #fullDict {
         width: 100%;
         font-family: var(--font-mono, ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace);
-        font-variant-numeric: slashed-zero;
-        font-feature-settings: "zero" 1;
+        font-variant-numeric: slashed-zero tabular-nums;
+        font-variant-ligatures: none;
+        font-feature-settings: "zero" 1, "tnum" 1, "calt" 0, "liga" 0;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         font-size: 5pt;
         font-weight: 1;
         overflow-wrap: anywhere;
