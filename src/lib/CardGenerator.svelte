@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onDestroy, tick } from "svelte";
     import {getRNG} from "./util";
     import Block from "./Block.svelte";
     import ColorPicker, {A11yVariant} from 'svelte-awesome-color-picker';
@@ -85,6 +86,90 @@
         target.value = "";
     };
 
+    let isFullscreen = false;
+    let fullscreenContainer: HTMLElement;
+    let cardElement: HTMLElement;
+    let wasNativeFullscreen = false;
+    let windowWidth = 0;
+    let windowHeight = 0;
+    let fullscreenScale = 1;
+
+    let updateScale = () => {
+        if (!isFullscreen || !cardElement) {
+            fullscreenScale = 1;
+            return;
+        }
+        const baseWidth = cardElement.offsetWidth || 324;
+        const baseHeight = cardElement.offsetHeight || 204;
+
+        // Small margins from the screen edges (16px on each side = 32px total)
+        const margin = 32;
+        const availW = Math.max(windowWidth - margin, 50);
+        const availH = Math.max(windowHeight - margin, 50);
+
+        const scaleX = availW / baseWidth;
+        const scaleY = availH / baseHeight;
+
+        fullscreenScale = Math.min(scaleX, scaleY);
+    };
+
+    $: if (isFullscreen && windowWidth && windowHeight && cardElement) {
+        updateScale();
+    }
+
+    let enterFullscreen = async () => {
+        isFullscreen = true;
+        await tick();
+        updateScale();
+        if (fullscreenContainer && document.fullscreenEnabled) {
+            try {
+                if (!document.fullscreenElement) {
+                    await fullscreenContainer.requestFullscreen();
+                    wasNativeFullscreen = true;
+                }
+            } catch {}
+        }
+    };
+
+    let exitFullscreen = async () => {
+        isFullscreen = false;
+        fullscreenScale = 1;
+        if (document.fullscreenElement) {
+            try {
+                await document.exitFullscreen();
+            } catch {}
+        }
+        wasNativeFullscreen = false;
+    };
+
+    let handleKeydown = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && isFullscreen) {
+            exitFullscreen();
+        }
+    };
+
+    let onFullscreenChange = () => {
+        if (wasNativeFullscreen && !document.fullscreenElement) {
+            isFullscreen = false;
+            fullscreenScale = 1;
+            wasNativeFullscreen = false;
+        }
+    };
+
+    onDestroy(() => {
+        if (typeof document !== "undefined") {
+            document.body.classList.remove("has-fullscreen");
+        }
+    });
+
+    $: if (typeof document !== "undefined") {
+        if (isFullscreen) {
+            document.body.classList.add("has-fullscreen");
+        } else {
+            document.body.classList.remove("has-fullscreen");
+        }
+    }
+
     let classNames = {
         "abcdefghijklmnopqrstuvwxyz": "lowercase latin",
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ": "uppercase latin",
@@ -154,6 +239,8 @@
 </script>
 
 
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} on:keydown={handleKeydown} on:fullscreenchange={onFullscreenChange} />
+
 <div class="settings">
     <label class="text-label" for={`seed${cardId}`}>seed: <input id={`seed${cardId}`} class="text-input" bind:value={seed}
                                                       placeholder="seed"/>
@@ -164,6 +251,7 @@
         <label><input type="checkbox" bind:checked={cardborder} name="cardborder"/>show credit card border <span style="font-size: 7pt">(ISO/IEC 7810 ID-1)</span></label>
         <button on:click={saveConfig} title="Save seed, alphabet, and options to file">save</button>
         <button on:click={triggerLoadFile} title="Load seed, alphabet, and options from file">load</button>
+        <button on:click={enterFullscreen} title="View just the card in fullscreen">fullscreen</button>
         <input type="file" bind:this={fileInput} on:change={loadConfig} accept=".json,application/json" style="display: none;" />
     </div>
     {#if extraOptions}
@@ -231,18 +319,29 @@
         </div>
     {/if}
 </div>
-<div class="card">
-    <div class:cardborder></div>
-    <div class="blocks">
-        {#each out as block,i}
-            <div class="block-wrapper">
-                <Block input={inputList[i]} output={block} colorOffsetIndex={i} seed={numseed}
-                       colors={color_options[color_choice]}/>
+<div class="card-container" class:is-fullscreen={isFullscreen} bind:this={fullscreenContainer}>
+    {#if isFullscreen}
+        <div class="fullscreen-controls">
+            <button class="exit-fullscreen-btn" on:click={exitFullscreen} title="Exit fullscreen">
+                ✕ Exit
+            </button>
+        </div>
+    {/if}
+    <div class="card-scaler" style={isFullscreen ? `transform: scale(${fullscreenScale});` : ""}>
+        <div class="card" bind:this={cardElement}>
+            <div class:cardborder></div>
+            <div class="blocks">
+                {#each out as block,i}
+                    <div class="block-wrapper">
+                        <Block input={inputList[i]} output={block} colorOffsetIndex={i} seed={numseed}
+                               colors={color_options[color_choice]}/>
+                    </div>
+                {/each}
+                <div class="block-wrapper" style="width: {39.333 * Math.max(3,8-input.length%8) - 2}px">
+                    <div class="seedDisplay">{seed}</div>
+                    <div id="fullDict">{fullDict.join("")}</div>
+                </div>
             </div>
-        {/each}
-        <div class="block-wrapper" style="width: {39.333 * Math.max(3,8-input.length%8) - 2}px">
-            <div class="seedDisplay">{seed}</div>
-            <div id="fullDict">{fullDict.join("")}</div>
         </div>
     </div>
 </div>
@@ -396,10 +495,72 @@
 
     }
 
+    :global(body.has-fullscreen) {
+        overflow: hidden !important;
+    }
+
+    .card-scaler {
+        display: contents;
+    }
+
+    .card-container.is-fullscreen {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #ffffff;
+        z-index: 2147483647;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .card-container.is-fullscreen .card-scaler {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform-origin: center center;
+    }
+
+    .fullscreen-controls {
+        position: fixed;
+        top: 0.5rem;
+        right: 0.5rem;
+        z-index: 2147483647;
+    }
+
+    .exit-fullscreen-btn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+        font-family: inherit;
+        background: rgba(43, 58, 46, 0.85);
+        color: #ffffff;
+        border: 1px solid rgba(28, 39, 30, 0.8);
+        border-radius: 3px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .exit-fullscreen-btn:hover {
+        background: rgba(62, 83, 66, 0.95);
+    }
+
     @media print {
-        .settings {
+        .settings, .fullscreen-controls {
             display: none !important;
         }
 
+        .card-container.is-fullscreen {
+            position: static;
+            width: auto;
+            height: auto;
+            background: transparent;
+        }
     }
 </style>

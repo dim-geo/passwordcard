@@ -1,3 +1,30 @@
 :root {
     --font-mono: ui-monospace, 'SF Mono', Monaco, Menlo, Consolas, 'Cascadia Mono', 'Roboto Mono', 'DejaVu Sans Mono', monospace;
 }
+
+body.has-fullscreen {
+    overflow: hidden !important;
+    background-color: #ffffff !important;
+}
+
+body.has-fullscreen .background {
+    background-color: #ffffff !important;
+    min-height: 100vh;
+}
+
+body.has-fullscreen .container {
+    background-color: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+}
+
+body.has-fullscreen .explanation,
+body.has-fullscreen .settings {
+    display: none !important;
+}
+
+body.has-fullscreen .card-box:not(:has(.is-fullscreen)) {
+    display: none !important;
+}
